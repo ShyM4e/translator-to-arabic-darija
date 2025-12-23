@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "Darija Translator",
+  "version": "1.0",
+  "description": "Translate text and images to Moroccan Darija",
+  "permissions": [
+    "sidePanel",
+    "contextMenus",
+    "activeTab",
+    "scripting"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+  "action": {
+    "default_title": "Open Darija Translator"
+  }
+}
