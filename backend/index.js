@@ -3,23 +3,23 @@ import './env-loader.js';
 import express from 'express';
 import cors from 'cors';
 
-import translationRoutes from './src/routes/translation.routes.js';
+import translationRoutes from './src/routes/translation.route.js';
+import basicAuth from './src/middlware/basicAuth.js';
 import { errorHandler, notFoundHandler } from './src/middlware/error.handler.js';
 
 const app = express();
 
-app.use(cors({
-  origin: '*'
-}));
+app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-
-app.use('/api', translationRoutes);
+// Protect all /api routes with HTTP Basic Auth
+app.use('/api', basicAuth, translationRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log('*********************************');
   console.log(`Server running on port ${PORT}`);

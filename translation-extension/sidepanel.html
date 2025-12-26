@@ -8,6 +8,24 @@
 <body>
   <div class="container">
     <h1>🇲🇦 Darija Translator</h1>
+
+    <!-- AUTH SECTION -->
+    <div id="authSection" class="auth-card">
+      <h3>Login</h3>
+      <div class="auth-row">
+        <label for="authUser">Username</label>
+        <input id="authUser" placeholder="username" />
+      </div>
+      <div class="auth-row">
+        <label for="authPass">Password</label>
+        <input id="authPass" type="password" placeholder="password" />
+      </div>
+      <div class="auth-actions">
+        <button id="loginBtn" class="btn-primary">Login</button>
+        <button id="logoutBtn" class="btn-secondary hidden">Logout</button>
+      </div>
+      <div class="auth-note">Credentials must match the server `AUTH_USER`/`AUTH_PASS`.</div>
+    </div>
     
     <!-- TEXT TRANSLATION -->
     <div class="section">

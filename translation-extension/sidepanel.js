@@ -12,7 +12,53 @@ const translationText = document.getElementById('translationText');
 const imagePreview = document.getElementById('imagePreview');
 const previewImg = document.getElementById('previewImg');
 
+// Auth elements
+const authSection = document.getElementById('authSection');
+const authUserInput = document.getElementById('authUser');
+const authPassInput = document.getElementById('authPass');
+const loginBtn = document.getElementById('loginBtn');
+const logoutBtn = document.getElementById('logoutBtn');
+
 let selectedImage = null;
+let authToken = null; // base64 token (without 'Basic ' prefix)
+
+// Initialize auth state from chrome.storage
+chrome.storage.local.get(['basicAuthToken'], (items) => {
+  if (items && items.basicAuthToken) {
+    authToken = items.basicAuthToken;
+    authSection.classList.add('hidden');
+    logoutBtn.classList.remove('hidden');
+  } else {
+    authSection.classList.remove('hidden');
+    logoutBtn.classList.add('hidden');
+  }
+});
+
+// Login handler
+loginBtn.addEventListener('click', () => {
+  const user = authUserInput.value.trim();
+  const pass = authPassInput.value;
+  if (!user || !pass) {
+    showError('Enter username and password');
+    return;
+  }
+  const token = btoa(`${user}:${pass}`);
+  chrome.storage.local.set({ basicAuthToken: token }, () => {
+    authToken = token;
+    authSection.classList.add('hidden');
+    logoutBtn.classList.remove('hidden');
+    hideAll();
+  });
+});
+
+logoutBtn.addEventListener('click', () => {
+  chrome.storage.local.remove('basicAuthToken', () => {
+    authToken = null;
+    authSection.classList.remove('hidden');
+    logoutBtn.classList.add('hidden');
+    hideAll();
+  });
+});
 
 // Listen for messages from background script
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
@@ -59,10 +105,16 @@ translateBtn.addEventListener('click', async () => {
   loading.classList.remove('hidden');
 
   try {
+    if (!authToken) {
+      showError('Please login first');
+      return;
+    }
+
     const response = await fetch(`${API_URL}/translate`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Basic ${authToken}`
       },
       body: JSON.stringify({ text })
     });
@@ -111,8 +163,16 @@ translateImageBtn.addEventListener('click', async () => {
   formData.append('image', selectedImage);
 
   try {
+    if (!authToken) {
+      showError('Please login first');
+      return;
+    }
+
     const response = await fetch(`${API_URL}/translate-image`, {
       method: 'POST',
+      headers: {
+        'Authorization': `Basic ${authToken}`
+      },
       body: formData
     });
 

@@ -1,11 +1,13 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 console.log('GEMINI CONFIG LOADING...');
+console.log('API Key value:', process.env.GEMINI_API_KEY);
+console.log('API Key exists:', !!process.env.GEMINI_API_KEY);
+console.log('API Key length:', process.env.GEMINI_API_KEY?.length);
 
 // Initialize Gemini AI Object
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-// Function to get Gemini Model instance
 export const getGeminiModel = () => {
   console.log('Getting Gemini model...');
   const model = genAI.getGenerativeModel({ 
